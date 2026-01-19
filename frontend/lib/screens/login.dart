@@ -119,12 +119,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
               ElevatedButton(
-                onPressed: () {},
-                child: Text(
-                  "Login",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white),
-                ),
+                onPressed: () {
+                  isLoading ? null : login();
+                },
+                child: isLoading
+                    ? CircularProgressIndicator(color: Colors.white)
+                    : Text(
+                        "Login",
+                        style: TextStyle(color: Colors.white),
+                      ),
                 style: ButtonStyle(
                     backgroundColor: (MaterialStatePropertyAll(Colors.black)),
                     shape: MaterialStatePropertyAll(RoundedRectangleBorder(
@@ -134,10 +137,14 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 10)),
               Text("Don't Have Account?"),
-              TextButton(onPressed: () {
-                Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const SignUpScreen()));
-              }, child: Text("Sign Up"))
+              TextButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SignUpScreen()));
+                  },
+                  child: Text("Sign Up"))
             ],
           ),
         ),
