@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:heartsync_fn/custom_fields/text_field.dart';
 import 'package:heartsync_fn/screens/login.dart';
@@ -25,9 +23,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
       });
       try {
         await Supabase.instance.client.auth.signUp(
+          data: {
+            'display_name': nameController.text
+          }, // passing display name in metadata
           email: emailController.text,
           password: passwordController.text,
         );
+        final user = Supabase.instance.client.auth.currentUser;
+        if (user != null) {
+          await Supabase.instance.client.from('profiles').insert({
+            'id': user.id,
+            'name': nameController.text,
+          });
+        }
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Sign Up Successful")),
@@ -149,11 +157,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ],
                 ),
                 ElevatedButton(
-                  onPressed: () {},
-                  child: Text(
-                    "Sign Up",
-                    style: TextStyle(color: Colors.white),
-                  ),
+                  onPressed: isLoading ? null : SignUp,
+                  child: isLoading
+                      ? CircularProgressIndicator(color: Colors.white)
+                      : Text(
+                          "Sign Up",
+                          style: TextStyle(color: Colors.white),
+                        ),
                   style: ButtonStyle(
                       backgroundColor: MaterialStatePropertyAll(Colors.black),
                       shape: MaterialStatePropertyAll(RoundedRectangleBorder(
